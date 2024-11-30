@@ -21,16 +21,62 @@ st.write(
     """
 )
 
+name = "km123"
 
 url: str = st.secrets.get("SUPABASE_URL")
 key: str = st.secrets.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
+# Function to fetch data with caching
+@st.cache_data
+def fetch_data():
+    response = supabase.table("my_first_table").select("*").execute()
+    if response.data:
+        return pd.DataFrame(response.data)
+    return pd.DataFrame()  # Return empty DataFrame if no data
+
+# Function to insert new data
+def insert_data(name):
+    supabase.table("my_first_table").insert({"data": "hieiiierl", "name": name}).execute()
+
+# Main Streamlit app logic
+st.title("Welcome to My App")
+
+# Fetch and display data
+df = fetch_data()
+st.dataframe(df)
+
+# Input for the name
+name = st.text_input("Enter your name:")
+
+if name:
+    if name in df["name"].values:
+        st.write(f"Welcome back, {name}!")
+    else:
+        insert_data(name)
+        st.write(f"Thanks for signing up, {name}!")
+
+        # Update cached data to reflect the new insertion
+        st.cache_data.clear()  # Clear cache to refresh the table
+        df = fetch_data()
+        st.dataframe(df)
+
+# response = supabase.table("my_first_table").select("*").execute()
+# # convert to df
+# response = pd.DataFrame(response.data)
+# # display as a table in streamlit
+# st.dataframe(response)
 
 
-
-
-
+# if name in response["name"]:
+#     st.write(f"Welcome back, {name}!")
+# else:
+#     response = (
+#         supabase.table("my_first_table")
+#         .insert({"data": "hieiiierl", "name": name})
+#         .execute()
+#     )
+#     st.write(f"Thanks for signing up, {name}!")
 
 
 
