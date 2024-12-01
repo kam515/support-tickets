@@ -21,6 +21,8 @@ st.write(
     """
 )
 
+st.markdown('| 1 | 2 | 3 |\n|---|---|---|\n|   |   |   |\n|   |   |   |')
+
 # CUSTOM COMPONENT FOR MERMAID RENDERING!!!
 # def mermaid(code: str) -> None:
 #     components.html(
