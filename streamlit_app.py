@@ -22,7 +22,27 @@ st.write(
 )
 
 # CUSTOM COMPONENT FOR MERMAID RENDERING!!!
-def mermaid(code: str) -> None:
+# def mermaid(code: str) -> None:
+#     components.html(
+#         f"""
+#         <pre class="mermaid">
+#             {code}
+#         </pre>
+
+#         <script type="module">
+#             import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+#             mermaid.initialize({{ startOnLoad: true }});
+#         </script>
+#         """
+#     )
+def mermaid(code: str, height: int = 800) -> None:
+    """
+    Renders a Mermaid diagram using Streamlit's HTML components with adjustable height.
+
+    Args:
+        code (str): The Mermaid diagram definition as a string.
+        height (int): The height of the rendered component in pixels.
+    """
     components.html(
         f"""
         <pre class="mermaid">
@@ -33,11 +53,48 @@ def mermaid(code: str) -> None:
             import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
             mermaid.initialize({{ startOnLoad: true }});
         </script>
-        """
+        """,
+        height=height,  # Set the height dynamically
+        scrolling=True  # Allow scrolling for larger diagrams
+    )
+
+def mermaid_dynamic(code: str) -> None:
+    """
+    Renders a Mermaid diagram in Streamlit with dynamic height adjustment.
+
+    Args:
+        code (str): The Mermaid diagram definition as a string.
+    """
+    components.html(
+        f"""
+        <div id="mermaid-container">
+            <pre class="mermaid">
+                {code}
+            </pre>
+        </div>
+
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true }});
+            
+            // Adjust height dynamically after rendering
+            const observer = new ResizeObserver(() => {{
+                const container = document.getElementById('mermaid-container');
+                if (container) {{
+                    const contentHeight = container.scrollHeight;
+                    window.parent.postMessage({{ height: contentHeight }}, '*');
+                }}
+            }});
+            observer.observe(document.getElementById('mermaid-container'));
+        </script>
+        """,
+        height=100,  # Initial height for loading; will adjust dynamically
+        scrolling=False  # Disable scrolling; height adjusts to content
     )
 
 
-mermaid(
+
+mermaid_dynamic(
     """
     graph LR
         A --> B --> C
@@ -87,6 +144,49 @@ if name:
         st.cache_data.clear()  # Clear cache to refresh the table
         df = fetch_data()
         st.dataframe(df)
+
+
+
+mermaid("""
+graph TD
+    subgraph Initiation
+        A1[Identify Requirements] --> A2[Feasibility Study]
+        A2 --> A3[Stakeholder Approval]
+    end
+    
+    subgraph Planning
+        B1[Define Scope] --> B2[Develop Schedule]
+        B2 --> B3[Resource Allocation]
+        B3 --> B4[Risk Assessment]
+        B4 --> B5[Finalize Plan]
+    end
+    
+    subgraph Execution
+        C1[Team Onboarding] --> C2[Task Assignments]
+        C2 --> C3[Implement Deliverables]
+        C3 --> C4[Quality Assurance]
+    end
+    
+    subgraph Monitoring
+        D1[Track Progress] --> D2[Report Performance]
+        D2 --> D3[Manage Risks]
+        D3 --> D4[Update Stakeholders]
+    end
+    
+    subgraph Closing
+        E1[Final Deliverable Review] --> E2[Stakeholder Acceptance]
+        E2 --> E3[Project Retrospective]
+        E3 --> E4[Archive Documents]
+    end
+
+    A3 --> B1
+    B5 --> C1
+    C4 --> D1
+    D4 --> E1
+""")
+
+
+
 
 # response = supabase.table("my_first_table").select("*").execute()
 # # convert to df
