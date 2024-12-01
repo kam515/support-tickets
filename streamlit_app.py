@@ -21,6 +21,7 @@ st.write(
     """
 )
 
+# CUSTOM COMPONENT FOR MERMAID RENDERING!!!
 def mermaid(code: str) -> None:
     components.html(
         f"""
