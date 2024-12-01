@@ -21,6 +21,44 @@ st.write(
     """
 )
 
+def render_mermaid_diagram(diagram_code):
+    """
+    Renders a Mermaid diagram in a Streamlit app.
+    Args:
+        diagram_code (str): Mermaid diagram definition as a string.
+    """
+    st.markdown(
+        f"""
+        <div class="mermaid">
+        {diagram_code}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    # Load Mermaid.js library
+    st.markdown(
+        """
+        <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# Example usage
+st.markdown("### Mermaid Diagram Renderer")
+example_diagram = """
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+"""
+render_mermaid_diagram(example_diagram)
+
+
+
+
+
 name = "km123"
 
 url: str = st.secrets.get("SUPABASE_URL")
