@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit as st
 import supabase
 from supabase import create_client, Client
-
+import streamlit.components.v1 as components
 
 
 # Show app title and description.
@@ -21,39 +21,27 @@ st.write(
     """
 )
 
-def render_mermaid_diagram(diagram_code):
-    """
-    Renders a Mermaid diagram in a Streamlit app.
-    Args:
-        diagram_code (str): Mermaid diagram definition as a string.
-    """
-    st.markdown(
+def mermaid(code: str) -> None:
+    components.html(
         f"""
-        <div class="mermaid">
-        {diagram_code}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    # Load Mermaid.js library
-    st.markdown(
+        <pre class="mermaid">
+            {code}
+        </pre>
+
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true }});
+        </script>
         """
-        <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-        <script>mermaid.initialize({startOnLoad:true});</script>
-        """,
-        unsafe_allow_html=True,
     )
 
-# Example usage
-st.markdown("### Mermaid Diagram Renderer")
-example_diagram = """
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-"""
-render_mermaid_diagram(example_diagram)
+
+mermaid(
+    """
+    graph LR
+        A --> B --> C
+    """
+)
 
 
 
