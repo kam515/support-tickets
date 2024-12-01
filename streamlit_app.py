@@ -35,7 +35,7 @@ st.write(
 #         </script>
 #         """
 #     )
-def mermaid(code: str, height: int = 800) -> None:
+def mermaid(code: str, height: int = 100) -> None:
     """
     Renders a Mermaid diagram using Streamlit's HTML components with adjustable height.
 
@@ -55,7 +55,28 @@ def mermaid(code: str, height: int = 800) -> None:
         </script>
         """,
         height=height,  # Set the height dynamically
-        scrolling=True  # Allow scrolling for larger diagrams
+        scrolling=False  # Allow scrolling for larger diagrams
+    )
+
+def mermaid_no_h(code: str) -> None:
+    """
+    Renders a Mermaid diagram using Streamlit's HTML components with adjustable height.
+
+    Args:
+        code (str): The Mermaid diagram definition as a string.
+        height (int): The height of the rendered component in pixels.
+    """
+    components.html(
+        f"""
+        <pre class="mermaid">
+            {code}
+        </pre>
+
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true }});
+        </script>
+        """
     )
 
 def mermaid_dynamic(code: str) -> None:
@@ -92,9 +113,60 @@ def mermaid_dynamic(code: str) -> None:
         scrolling=False  # Disable scrolling; height adjusts to content
     )
 
+def mermaid_dynamic_2(code: str) -> None:
+    """
+    Renders a Mermaid diagram using Streamlit's HTML components with dynamic height.
 
+    Args:
+        code (str): The Mermaid diagram definition as a string.
+    """
+    components.html(
+        f"""
+        <div id="mermaid-container">
+            <pre class="mermaid">{code}</pre>
+        </div>
 
-mermaid_dynamic(
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true }});
+
+            // Function to dynamically adjust height
+            window.addEventListener('load', () => {{
+                const container = document.getElementById('mermaid-container');
+                const height = container.scrollHeight;
+                container.style.height = height + 'px'; // Set height dynamically
+            }});
+        </script>
+        """,
+        height=500,  # Initial height (adjusted later)
+        scrolling=False  # No scrolling needed since height will adapt
+    )
+
+def mermaid_with_div(code: str, height: int = 100) -> None:
+    """
+    Renders a Mermaid diagram using Streamlit's HTML components with adjustable height.
+
+    Args:
+        code (str): The Mermaid diagram definition as a string.
+        height (int): The height of the rendered component in pixels.
+    """
+    components.html(
+        f"""
+        <div style="height:{height}px; overflow: auto;">
+            <pre class="mermaid">
+                {code}
+            </pre>
+        </div>
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true }});
+        </script>
+        """,
+        height=height,  # Set the height dynamically for the component
+        scrolling=True  # Allow scrolling for larger diagrams
+    )
+
+mermaid_no_h(
     """
     graph LR
         A --> B --> C
@@ -147,7 +219,7 @@ if name:
 
 
 
-mermaid("""
+mermaid_no_h("""
 graph TD
     subgraph Initiation
         A1[Identify Requirements] --> A2[Feasibility Study]
